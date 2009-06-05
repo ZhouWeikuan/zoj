@@ -1,0 +1,69 @@
+寄信人: bluecheck (我不知道风是往哪一个方向吹)
+标  题: Re: [zz]baidu复赛的match editorial(Problem C)(转寄)
+发信站: 日月光华 (2006年07月16日21:29:15 星期天)
+来  源: 10.85.23.19
+
+哦，这个，是个贪心。O(n^3)
+我把Rudolf课件上的说明给你吧:)
+
+
+For two nodes u and v let G/{u, v} denote the graph obtained from G by
+merging u and v into a single node (whose neighbors are the old neighbors of
+u
+and v, and corresponding edge weights are added). The algorithm is based on
+the following observation.
+
+
+
+Lemma 9.4.1. Let s, t be any two vertices of G. A minimum cut of G can be
+obtained by taking the smaller of a minimum s-t cut of G and a minimum cut
+of G/{s, t}.
+
+
+Proof. The minimum cut of G must either separate s and t, or put them in the
+same component. In the latter case, it is also a minimum cut in G/{s, t}. ..
+For a subset A of the nodes and a node u not in A we define the weight
+w(A, u) as the sum of all edge weights between u and nodes in A. The most
+tightly packed node for A is the node u maximizing w(A, u).
+The mincut algorithm runs in n . 1 phases. In the first phase we start
+with the given graph G as the current graph. Let u be an arbitrary node of
+the current graph. We grow A = {u} into V by adding in each step the most
+tightly packed node to A. The cut-of-the-phase is the cut of V separating
+the
+node last added from the other nodes. Then we merge the two nodes that were
+added last in this phase, using this new graph as the current graph in the
+next
+phase.
+The following lemma together with Lemma 9.4.1 implies that we can find
+the minimum cut of G among the values of the n . 1 cuts-of-the-phase.
+
+
+Lemma 9.4.2. Each cut-of-the-phase is a minimum s-t cut in the current
+graph, where s and t are the two nodes added last in the phase.
+Proof. Let C be an arbitrary s-t cut. We will show that it is at least as
+heavy
+as the current cut-of-the-phase.
+We call a node v (but not the first node we start the phase with) active
+(with
+respect to C) if v and the node added just before v are in the two
+different parts
+of C. Let w(C) be the weight of C, Av the set of all nodes added before v
+(not
+including v), Cv the cut of Av induced by C, and w(Cv) the weight of Cv. We
+show by induction that w(Av, v) ≤ w(Cv) for each active node v. Since t is
+active (the node selected before t was s), we conclude that the value of
+the cut-
+of-the-phase w(At, t) ≤ w(Ct) = w(C), i.e., the cut-of-the-phase is a
+minimum
+s-t cut.
+For the first active node v we have w(Av, v) = w(Cv). Let u be some active
+node, and v the last active node added before u. Then we have w(Au, u) =
+w(Av, u)+w(Au.Av, u) ≤ w(Av, v)+w(Au.Av, u) ≤ w(Cv)+w(Au.Av, u) ≤
+w(Cu), because v was most tightly connected with Av at the time v was
+selected.
+
+
+
+
+乘着风的日子，没有拘束。
+※ 来源:·日月光华 bbs.fudan.edu.cn·[FROM: 10.85.23.19]                                                                

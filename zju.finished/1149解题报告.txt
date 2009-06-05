@@ -1,0 +1,146 @@
+zoj 1149解题报告- -
+                                      
+
+题目：Dividing Up
+
+http://acm.zju.edu.cn/show_problem.php?pid=1149
+
+本题不会做，后来看到了毛子青前辈的文章，才知道了双向dp这个东西，后来用他的方法写，结果超时，最后，又搜了一下论坛，找到了那个水王的帖子，用了一个把大数变成小数的式子：
+
+if(data[i]>10)
+
+    data[i]=data[i]%10+10;
+
+这个式子没有被证明过，也许是错的，但就是能a。
+
+这里不对这个式子做研究，只研究双向dp。
+
+先看单用dp怎么做，设数组flag[i][j],代表从1-i堆中能否取出价值为j的mables，能的话为true，否则为false，状态转移方程： flag[i][j]=||(flag[i-1][j-k*i]) 0<=k*i<=j,边界条件：flag[i][0]=true;
+
+只要flag[6][sum]==true,就可以找到。
+
+双向dp：问题比较大的时候可以用双向dp，这个时候如果i<=3,flag[i][j]代表能否从1-i中取出价值j,这个状态转移方程和上面一样。如果i>=4,a[i][j]代表能否从i-n中取出价值为j的东西，此时状态转移方程为：flag[i][j]=||(flag[i+1] [j-k*i]) 0<=k*i<=j。
+
+然后如果能找到一个数k，是的flag[3][k]&&flag[4][sum-k]为true，那么就可以。
+
+附毛子青前辈的论文：
+
+[问题描述]
+
+有价值分别为1..6的大理石各a[1..6]块，现要将它们分成两部分，使得两部分价值和相等，问是否可以实现。其中大理石的总数不超过20000。(英文试题详见附件)
+
+[算法分析]
+
+令S=∑(i*a[i])，若S为奇数，则不可能实现，否则令Mid=S/2，则问题转化为能否从给定的大理石中选取部分大理石，使其价值和为Mid。
+
+这实际上是母函数问题，用动态规划求解也是等价的。
+
+m[i, j]，0≤i≤6，0≤j≤Mid，表示能否从价值为1..i的大理石中选出部分大理石，使其价值和为j，若能，则用true表示，否则用false表示。则状态转移方程为：
+
+m[i, j]=m[i, j]  OR  m[i-1,j-i*k]         (0≤k≤a[i])
+
+规划的边界条件为：m[i,0]=true； 0≤i≤6
+
+若m[i, Mid]=true，0≤i≤6，则可以实现题目要求，否则不可能实现。
+
+我们来分析上述算法的时间性能，上述算法中每个状态可能转移的状态数为a[i]，每次状态转移的时间为O(1)，而状态总数是所有值为true的状态的总数，实际上就是母函数中项的数目。
+
+[算法优化]
+
+实践发现：本题在i较小时，由于可选取的大理石的价值品种单一，数量也较少，因此值为true的状态也较少，但随着i的增大，大理石价值品种和数量的增多，值为true的状态也急剧增多，使得规划过程的速度减慢，影响了算法的时间效率。
+
+另一方面，我们注意到我们关心的仅是能否得到价值和为Mid的值为true的状态，那么，我们能否从两个方向分别进行规划，分别求出从价值为1..3的大理石中选出部分大理石所能获得的所有价值和，和从价值为4..6的大理石中选出部分大理石所能获得的所有价值和。最后通过判断两者中是否存在和为Mid的价值和，由此，可以得出问题的解。
+
+状态转移方程改进为：
+
+当i≤3时：
+
+m[i, j]=m[i, j]  OR  m[i-1,j-i*k]         (1≤k≤a[i])
+
+当i>3时：
+
+m[i, j]=m[i, j]  OR  m[i+1,j-i*k]        (1≤k≤a[i])
+
+代码：
+
+#include
+#include
+main()
+{
+ int num=0,i,i1,i2,sum,data[7];
+ bool flag[8][60005],ans;
+ while(1)
+ {
+  sum=0;
+  for(i=1;i<=6;i++)
+  {
+   scanf("%d",&data[i]);
+   if(data[i]>10)
+    data[i]=data[i]%10+10;
+   sum+=data[i]*i;
+  }
+  if(sum==0)
+   break;
+  num++;
+  if(sum%2==1)
+  {
+   printf("Collection #%d:\nCan't be divided.\n\n",num);
+   continue;
+  }
+  sum/=2;
+  memset(flag,0,sizeof(flag));
+  ans=false;
+  for(i=0;i<=7;i++)
+  {
+   flag[i][0]=true;
+  }
+  for(i=1;i<=3;i++)
+  {
+   for(i1=1;i1<=sum;i1++)
+   {
+    for(i2=0;i2<=data[i];i2++)
+    {
+     if(i1-i*i2<0)
+      break;
+     if(flag[i-1][i1-i*i2])
+     {
+      flag[i][i1]=true;
+      break;
+     }
+    }
+   }
+  }
+  for(i=6;i>=4;i--)
+  {
+   for(i1=1;i1<=sum;i1++)
+   {
+    for(i2=0;i2<=data[i];i2++)
+    {
+     if(i1-i*i2<0)
+      break;
+     if(flag[i+1][i1-i*i2])
+     {
+      flag[i][i1]=true;
+      break;
+     }
+    }
+   }
+  }
+  for(i=0;i<=sum;i++)
+  {
+   if(flag[3][i]&&flag[4][sum-i])
+   {
+    ans=true;
+    break;
+   }
+  }
+  if(ans)
+   printf("Collection #%d:\nCan be divided.\n\n",num);
+  else
+   printf("Collection #%d:\nCan't be divided.\n\n",num);
+ }
+}
+
+规划的边界条件为：m[i,0]=true； 0≤i≤7
+
+这样，若存在k，使得m[3,k]=true, m[4,Mid-k]=true，则可以实现题目要求，否则无法实现。
