@@ -1,10 +1,10 @@
-This git will only focus on Zju Online Judge only, welcome programs that are:
+This git will only focus on Zju Online Judge, welcome programs that are:
     1) It has not been submitted in this git before;
     2) It is better than current program, in time or space;
-    3) It provides a different view or model to current solution.
+    3) It provides a different view or model to current solution;
+    4) These codes will be listed in a directory called excellent, and each file will contain the author, time, space in zoj.
 
-Let's pass zoj together.
-Thanks in advance!
+Let's pass zoj together.  Thanks in advance!
 
 Yours Sincerely,
 Zhou Weikuan
