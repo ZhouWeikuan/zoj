@@ -1,11 +1,11 @@
 #include<iostream>
 #include<cstring>
-#include<queue>
+#include<set>
 
 using namespace std;
 enum
 {
-    SIZ = 1024,
+    SIZ = 1100,
 };
 
 int N;
@@ -17,30 +17,34 @@ int mask[12];
 void fun ()
 {
     int cur = (1 << N) - 1, nex;
-    queue <int> q;
-    memset (mat, 0, sizeof (mat));
+    set<int> s;
+    for (int i=0; i<SIZ; i++)
+        mat[i] = -1;
     mat[cur] = score;
-    q.push (cur);
+    s.insert(cur);
     
-    while (!q.empty ()) {
-        cur = q.front ();
-        q.pop ();
+    while (!s.empty ()) {
+        cur = *s.begin();
+        s.erase(cur);
+        if (cur == 0)
+            continue;
         
         for (int i = 0; i < N; i++) {
-            if ( (cur & (1 << i) ) == 0)
-                continue;
-                
+            if ((cur &(1<<i)) == 0) continue;
             nex = cur ^ mask[i];
             double v = mat[cur] * rat[i];
             if (v > mat[nex])
             {
                 mat[nex] = v;
-                q.push (nex);
+                s.insert (nex);
             }
         }
     }
     
-    printf ("%.2lf\n", mat[0]);
+    if (mat[0] >=0 )
+        printf ("%.2lf\n", mat[0]);
+    else 
+        printf ("-1\n");
 }
 
 int readIn () {
@@ -51,8 +55,7 @@ int readIn () {
         scanf ("%d ", &t);
         m = 1 << i;
         
-        while (t--)
-        {
+        while (t--) {
             scanf ("%d ", &a);
             --a;
             m |= (1 << a);
@@ -64,7 +67,7 @@ int readIn () {
         rat[i] = (100 - rat[i])/100.0;
     }
 
-    return N;
+    return !(N==0&&score==0.0);
 }
 
 int main () {
