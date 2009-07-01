@@ -1,4 +1,5 @@
 #include<iostream>
+#include<cstring>
 using namespace std;
 enum {
     SIZ = 100008,
@@ -13,7 +14,8 @@ void fun(){
     }
     memset(dat, '1', sizeof(dat));
     for (int i=0; i<n/2; i++){
-        int t = i + (i+1)*i;
+        long long t = i;
+        t = t + (t+1)*t;
         t %= n;
         dat[t] = '0';
     }
@@ -25,6 +27,7 @@ int main(){
 
     scanf("%d ", &n);
     while(n > 0){
+        fprintf(stderr, "%d\n", n);
         fun();
         scanf("%d ", &n);
     }
