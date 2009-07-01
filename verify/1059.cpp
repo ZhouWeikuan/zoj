@@ -130,8 +130,8 @@ void readIn(){
 int main(){
     int n;
 
-    //cin>>n;
-    n = 1;
+    cin>>n;
+    //n = 1;
     while(n--){
         readIn();
         fun();
