@@ -4,12 +4,12 @@
 using namespace std;
 
 /* + * ^ () */
-// 注意 ^的情况, 因为 a^b^c只能分成两部分, a b^c, 而不能分成三个部分
+// Care for ^, for we can only split a^b^c into two different parts, a b^c, instead of three parts.
 enum {
-	Size = 1008,
+	SIZ = 1008,
 };
 
-char buffer[Size];
+char buffer[SIZ];
 
 typedef struct {
 	int childnum;
@@ -18,20 +18,20 @@ typedef struct {
 	int end;
 }Node;
 
-Node tree[Size];
+Node tree[SIZ];
 int  num;
 int stack[100];
 int pos;
 
 void parse(int,int,int);
-//如果中间有+号，则进行加法处理分割
+// If there is +, then we split it with +
 int checkfor_add(int node){
 	int deep = 0;
 	int i, last = tree[node].start;
 	for(i=tree[node].start; i<tree[node].end;i++){
-		if(buffer[i] =='('){ // 左括号
+		if(buffer[i] =='('){ 
 			deep ++;
-		} else if(buffer[i] ==')'){ // 右括号
+		} else if(buffer[i] ==')'){
 			deep --;
 		} else if(buffer[i] =='+' && deep == 0){
 			if(i == last ){
@@ -52,14 +52,14 @@ int checkfor_add(int node){
     return 0;
 }
 
-// mult 处理 包括*和两括号相乘()()
+// Process for multiply, including * and ()()
 int checkfor_mult(int node){
 	int deep = 0;
 	int i, last = tree[node].start;
 	for(i=tree[node].start; i<tree[node].end;i++){
-		if(buffer[i] =='('){ // 左括号
+		if(buffer[i] =='('){ 
 			deep ++;
-		} else if(buffer[i] ==')'){ // 右括号
+		} else if(buffer[i] ==')'){
 			deep --;
 		} else if(buffer[i] == '*' && deep==0){
 			if(i == last ){
@@ -85,9 +85,9 @@ int checkfor_pow(int node){
 	int deep = 0;
 	int i, last = tree[node].start;
 	for(i=tree[node].start; i<tree[node].end;i++){
-		if(buffer[i] =='('){ // 左括号
+		if(buffer[i] =='('){ 
 			deep ++;
-		} else if(buffer[i] ==')'){ // 右括号
+		} else if(buffer[i] ==')'){ 
 			deep --;
 		} else if(deep ==0 && buffer[i] == '^'){
 			if(i == last ){
@@ -98,7 +98,7 @@ int checkfor_pow(int node){
             tree[node].child[ tree[node].childnum ++ ] = num;
             parse(num++,last,i);
             last = i+1;
-            break;
+            //break;
 		} 
 	}
 
@@ -110,8 +110,8 @@ int checkfor_pow(int node){
     return 0;
 }
 
-// 分析一段表达式，将缓冲区中的[s,e)认为是parent结点所包括的范围，
-// 再在其内进行分解。
+// Analyze an expression, treat the range [s,e) as the range included by parent node
+// and then split it inside
 void parse(int parent, int s, int e){
 	int i;
 
@@ -133,7 +133,7 @@ void parse(int parent, int s, int e){
 	if(checkfor_pow(parent)){
 		return;
 	}
-	/* () 包括了里面的语句 */
+	/* () includes expression in it */
 	if(buffer[s] =='(' && buffer[e-1]==')'){
 		tree[parent].childnum=1;
 		tree[parent].child[0] = num++;
@@ -146,25 +146,28 @@ void travel(){
 	int node = 0;
 	
 	for(i=0;i<pos;i++){
-		t= stack[i];
-        if(t < tree[node].childnum){
-		    node = tree[node].child[t];
-        }
+		t = stack[i];
+        if ( t >= tree[node].childnum)
+            t = tree[node].childnum - 1;
+		node = tree[node].child[t];
 	}
 	for(i=tree[node].start;i<tree[node].end;i++)
 		printf("%c",buffer[i]);
 }
 
 void fun(){
+    char tmp[SIZ], *s;
 	int tstnum,t;
 	char c;
-	scanf("%d", &tstnum);
+	scanf("%d ", &tstnum);
 	while(tstnum --){
 		pos = 0;
-		do {
-			scanf("%d%c",&t,&c);
-			stack[pos++] = t;
-		} while(c!='\n');
+        fgets(tmp, SIZ, stdin);
+        s = strtok(tmp, " \n\t");
+		while(s!=NULL) {
+			stack[pos++] = atoi(s);
+            s = strtok(NULL, " \n\t");
+		}
 		for(t=pos-1;t>=0;t--){
 			printf("op(%d,",stack[t]);
 			stack[t] --;
@@ -180,7 +183,7 @@ void fun(){
 
 int main(){
 	int tstcase = 0;
-	scanf("%s",buffer);
+	scanf("%s ",buffer);
 	while(buffer[0]!= '*'){
 		if(tstcase ++){
 			printf("\n");
@@ -191,7 +194,7 @@ int main(){
 
 		fun();
 		
-		scanf("%s",buffer);
+		scanf("%s ",buffer);
 	}
 
 	return 0;
