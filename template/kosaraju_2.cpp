@@ -1,4 +1,4 @@
-/*
+﻿/*
 PKU2553 The Bottom of a Graph
 */
 
@@ -30,34 +30,34 @@ void DFS_conn(Node* e[],int i,int mark[],int f[],int* nf){
     if(mark[i]) return;
     
     mark[i]=1;
-    if(!g_DFS_First) f[i]=*nf;  //反向搜索，获取连通分量编号
+    if(!g_DFS_First) f[i]=*nf;  // reverse search, get the number for the connected part
 
     for(p=e[i];p!=NULL;p=p->next){
         j=p->j;
         DFS_conn(e,j,mark,f,nf);
     }
-    if(g_DFS_First) f[(*nf)++]=i;   //正向搜索，获取时间戳
+    if(g_DFS_First) f[(*nf)++]=i;   // normal search, to get the time mark
 }
 
 /*
-有向图极大强连通分量
-参数：
-    邻接表e[]，节点数n。返回极大强连通分支的个数ncon。 
-    返回con[i]表示节点i所属强连通分量的编号，0 ~ ncon-1。
+ Get the maximum strong connect part for directed graph
+parameters:
+    neighbouring table e[], node number n, returned ncon the number of maximum strong connected part
+    returned con[], con[i] to represent the number of strong connected part of node i, the range is 0 ~ ncon-1
 */
 int Connection(Node* e[],int n,int con[]){
     int i,j,k,mark[N],ncon;
-    int time[N],ntime;  //time[i]表示时间戳为i的节点 
-    Node *p,*re[N]; //反向边
+    int time[N],ntime;  //time[i] to represent the node which timestamp is i
+    Node *p,*re[N]; //reverse edge
     
-    //构造反向边邻接表
+    // construct the reverse neighbouring table
     clr(re);
     for(i=0;i<n;i++){
         for(p=e[i];p!=NULL;p=p->next)
             addEdge(re,p->j,i);
     }
     
-    //正向DFS，获得时间戳 
+    // DFS, to get the timestamp
     g_DFS_First = 1;
     clr(mark); clr(time); ntime=0;
     for(i=0;i<n;i++){
@@ -65,7 +65,7 @@ int Connection(Node* e[],int n,int con[]){
             DFS_conn(e,i,mark,time,&ntime);
     }
     
-    //反向DFS，获得强连通分量 
+    // reverse DFS to get the strong connected part
     g_DFS_First = 0;
     clr(mark); clr(con); ncon=0;
     for(i=n-1;i>=0;i--){
