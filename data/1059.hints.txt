@@ -1,0 +1,10 @@
+What's in A Name?
+28/7/92
+Correct solution:
+In this problem, you are given a log from which you can deduce which person have used which ID. When a message is sent by the ID "id", anyone not currently in the hideout are eliminated as a potential match for "id". After we processed the complete log, we have a list of the potential matches between criminal names and ID's. Now what we have to do is to examine all possible ways of assigning criminal names to unique ID's such that the logs are not violated, and see if some criminal names are always assigned to the same ID's. If we view this as a bipartite graph in which the left vertices are the criminal names and the right vertices are the ID's, such that there is an edge between a criminal name and an ID if the assignment does not directly violate the log. Then a valid assignment is simply a perfect matching in the bipartite graph. To check if a particular criminal name can be assigned to an ID in a valid assignment, we determine if there is a perfect matching with the particular assignment fixed. This can be done by fixing the edge and then computing a maximum matching and see how many edges are in the matching. Once we have done this for all the possible criminal name-ID assignments, it is easy to obtain the final answer.
+Judges' solutions:
+Unfortunately, all three judges' solutions were incorrect (in different ways) but agreed on all test cases. In all three cases, we missed some assignments that can be made because we either did not examine all possible matchings or did not do so correctly. This resulted in the judges' expected output giving "???" instead of actual ID's for some of the criminal names in two of the test cases (A.7.dat, A.15.dat).
+Contestants' submissions:
+The submissions originally judged correct agreed with the judges' expected output, and hence they were also incorrect. Two teams with submissions judged incorrect were in fact correct: Waterloo Black and Waterloo Gold. All other submissions originally judged incorrect were still incorrect.
+Acknowledgements:
+We thank the Waterloo's coach Gordon Cormack and their teams for pointing out our mistake. 
