@@ -24,17 +24,6 @@ int dfs(int p){
     }
   return 0;
 }
-void readIn(){
-    int i,t;
-    int a,b;
-    memset(tab, 0, sizeof(tab));
-    cin>>num>>t;
-    while(t--){
-        cin>>a>>b;
-        a --, b --;
-        tab[a][b] = 1;
-    }
-}
 
 int get_match(){
   int i,res=0;
@@ -46,6 +35,18 @@ int get_match(){
   }
 
   return num - res;
+}
+
+void readIn(){
+    int i,t;
+    int a,b;
+    memset(tab, 0, sizeof(tab));
+    cin>>num>>t;
+    while(t--){
+        cin>>a>>b;
+        a --, b --;
+        tab[a][b] = 1;
+    }
 }
 
 int main(){
