@@ -76,10 +76,11 @@ struct BigNum {
 	BigNum<N> & operator *=(int);
 	BigNum<N> & operator +=(int);
 	BigNum<N> & operator +=(const BigNum<N> &);
+	BigNum<N> & operator -=(const BigNum<N> &);
 	BigNum<N> & operator /=(int);
     void operator *=(const BigNum<N> &);
 	int operator %=(int);
-	int cmp(BigNum<N> &);
+	int cmp(const BigNum<N> &);
 	template<int O>
 	friend ostream& operator<<(ostream& ,BigNum<O>&);
 };
@@ -197,6 +198,41 @@ BigNum<N> & BigNum<N>::operator +=( const BigNum<N> & rhs){
 }
 
 template<int N>
+BigNum<N> & BigNum<N>::operator -=(const BigNum<N> & rhs){
+    if (this->cmp(rhs) < 0){ // assume this >= rhs
+        throw "smaller than ...";
+    }
+    int i, carry = 0;
+    for(i=0; i<len&&i<rhs.len; i++){
+        d[i] -= rhs.d[i] + carry;
+        carry = 0;
+        while(d[i] < 0) {
+            d[i] += 10;
+            ++carry;
+        }
+    }
+    while(carry){
+        if (i>=len){
+            d[i] = 0;
+            ++len;
+        }
+        d[i] -= carry;
+        carry = 0;
+        while(d[i] < 0){
+            d[i] += 10;
+            ++carry;
+        }
+        ++i;
+    }
+    while(len > 0 && d[len-1] == 0)
+        --len;
+    if (len ==0){
+        len = 1;
+    }
+}
+
+
+template<int N>
 BigNum<N> & BigNum<N>::operator *=(int m){
 	int carry = 0;
 	int i;
@@ -245,7 +281,7 @@ int BigNum<N>::operator %=(int dm){
 }
 
 template<int N>
-int BigNum<N>::cmp(BigNum<N> &rhs){
+int BigNum<N>::cmp(const BigNum<N> &rhs){
 	if(len != rhs.len)
 		return len - rhs.len;
 	for(int i= len-1;i>=0;i--){
@@ -267,15 +303,10 @@ int main()
 {
     int i;
     BigNum<100> a, b;
-    scanf("%d ", &a.len);
-    for(i=0; i<a.len; i++){
-        scanf("%d ", &a.d[i]);
-    }
-    scanf("%d ", &b.len);
-    for(i=0; i<b.len; i++){
-        scanf("%d ", &b.d[i]);
-    }
-    a *= b;
+    a = 11;
+    b = 92;
+    a -= b;
+    cout<<a<<endl;
 
     return 0; 
 }
