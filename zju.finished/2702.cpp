@@ -13,13 +13,14 @@ map<int, int>::iterator it;
 
 void output(){
     int i;
-    printf("%d\n", out/4);
-    for(i=0; i<out;i+=4){
+    out /= 4;
+    printf("%d\n", out);
+    for(i=0; i<out;++i){
         printf("%d %d %d %d\n", 
-                ptr[i], 
-                ptr[i+1], 
-                ptr[i+2], 
-                ptr[i+3]);
+                ptr[4*i], 
+                ptr[4*i+1], 
+                ptr[4*i+2], 
+                ptr[4*i+3]);
     }
     printf("\n");
 }

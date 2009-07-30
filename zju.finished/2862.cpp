@@ -1,4 +1,7 @@
 #include<iostream>
+#include<cstring>
+#include<cstdlib>
+#include<string>
 #include<map>
 using namespace std;
 // Wrong Answer
@@ -10,30 +13,26 @@ struct Node{
     int val;
 };
 Node tree[SIZ];
-char cls[SIZ][256];
 char buf[256];
-struct _cmp{
-    bool operator()(const char *a, const char *b)const {
-        return strcmp(a,b)<0;
-    }
-}cmp;
-map<const char *, int, _cmp> tab;
-map<const char *, int, _cmp>::iterator it;
+string cls[SIZ];
+map<string, int> tab;
 int pos;
 
 int query(char *s){
-    it = tab.find(s);
+    string str(s);
+    map<string, int>::iterator it = tab.find(str);
     if(it != tab.end()){
         return it->second;
     }
-    strcpy(cls[pos], s);
-    tab.insert(make_pair(cls[pos], pos));
-    tree[pos].ptr =  0;
+    cls[pos] = str;
+    tab.insert(make_pair(str, pos));
+    tree[pos].ptr = -1;
     tree[pos].val = -1;
     return pos++;
 }
 
 int dfs(int s){
+    if (s < 0) return -2;
     if(tree[s].val==-1){
         tree[s].val = dfs(tree[s].ptr);
     }
@@ -50,10 +49,10 @@ void fun(){
         scanf("%s", buf);
         i = query(buf);
         i = tree[i].val;
-        if(i<=0){
+        if(i<0){
             printf("Exception\n");
         } else {
-            printf("%s\n", cls[i]);
+            printf("%s\n", cls[i].c_str());
         }
     }
 }
@@ -64,8 +63,8 @@ int readIn(){
         return 0;
     pos = 0;
     tab.clear();
+    memset(tree, -1, sizeof(tree));
     query(buf);
-    tree[0].val = 0;
     for(; n>0; n--){
         scanf("%s", buf);
         a = query(buf);
