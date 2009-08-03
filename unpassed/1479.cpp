@@ -1,5 +1,6 @@
-                         
 #include<iostream>
+#include<cstdlib>
+#include<cstring>
 #include<queue>
 using namespace std;
 enum {
@@ -7,15 +8,15 @@ enum {
 };
 int  wet[SIZ][SIZ];
 struct Point {
-    int x,y;
+    int x,y,w;
     bool operator < (const Point &rhs) const {
-        return wet[x][y] > wet[rhs.x][rhs.y];
+        return w > rhs.w;
     }
 };
 char room[SIZ][SIZ]; // 0-free, 1-beamed, *-obstacles.
 int row, col;
 Point src, dst;
-const char *dir="udlr";
+const char *dir="dulr";
 int move[4][2] = {
     {1,0},{-1,0},{0,-1},{0,1}
 };
@@ -74,6 +75,7 @@ int readIn(){
 }
 
 int fun(){
+    // if (room[src.x][src.y] == 1) return -1;
     priority_queue<Point> q;
     wet[src.x][src.y] = 0;
     q.push(src);
@@ -84,7 +86,9 @@ int fun(){
         if(cur.x == dst.x && cur.y==dst.y){
             return wet[dst.x][dst.y];
         }
-        v = wet[cur.x][cur.y];
+        if (cur.w > wet[cur.x][cur.y])
+            continue;
+        v = cur.w;
         for(int i=0; i<8; i++){
             nex.x = cur.x + direct[i][0];
             nex.y = cur.y + direct[i][1];
@@ -96,6 +100,7 @@ int fun(){
             t = v + (room[nex.x][nex.y]==1);
             if(wet[nex.x][nex.y]==-1 || wet[nex.x][nex.y]>t){
                 wet[nex.x][nex.y] = t;
+                nex.w = t;
                 q.push(nex);
             }
         }

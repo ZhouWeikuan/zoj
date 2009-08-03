@@ -1,4 +1,5 @@
 #include<iostream>
+#include<algorithm>
 #include<queue>
 //WA
 using namespace std;
@@ -51,6 +52,7 @@ void readIn(){
         stak[i+1].r = stak[i].c;
         stak[i+1].c = stak[i].r;
     }
+    if (num <= 2) return;
     tree[i].o = 0;
     sort(stak, stak+pos);
     sign = 0;
@@ -110,7 +112,9 @@ void query(){
     scanf("%d",&q);
     while(q--){
         scanf("%d%d%d",&a,&b,&c);
-        if(embrace(c, a)){
+        if (a==c || b == c)
+            t = 1;
+        else if(embrace(c, a)){
             if(embrace(c, b)){
                 t = check(c, a, b);
             } else {
