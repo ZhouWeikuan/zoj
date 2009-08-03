@@ -9,7 +9,25 @@ enum {
 struct Seg{
     int a,b,c;
     Seg *l,*r;
+
+  private:
+    static Seg *next;
+    static void putNode(Seg *t){
+        t->l = next;
+        next = t;
+    }
+    static Seg *getNode(){
+        Seg * t = next; next = next->l;
+        memset(t, 0, sizeof(*t));
+        return t;
+    }
+    static void clear(Seg *t){
+        if (t->l) clear(t->l);
+        if (t->r) clear(t->r);
+        putNode(t);
+    }
 };
+
 struct Save {
     int a,b,c;
 };
@@ -19,22 +37,13 @@ int color[SIZ];
 int maxVal, num;
 Save save[SIZ];
 
-void putNode(Seg *t){
-    t->l = next;
-    next = t;
-}
-Seg *getNode(){
-    Seg * t = next; next = next->l;
-    memset(t, 0, sizeof(*t));
-    return t;
-}
 void init(){
     next = pred = head =  0;
     for(int i=0;i<NUM;i++){
         tree[i].l = next;
         next = &tree[i];
     }
-    head = getNode();
+    head = Seg::getNode();
     head->a = MIN, head->b = MAX;
     head->c = -1;
 }
@@ -67,7 +76,7 @@ void add(Seg *t, int s,int e, int v){
     int m = (t->a+t->b)/2;
     if(s>=m){
         if(t->r == 0){
-            Seg *p = getNode();
+            Seg *p = Seg::getNode();
             p->a = m, p->b = t->b;
             p->c = -1;
             t->r = p;
@@ -75,7 +84,7 @@ void add(Seg *t, int s,int e, int v){
         return add(t->r, s, e, v);
     } else if(e<=m){
         if(t->l == 0){
-            Seg *p = getNode();
+            Seg *p = Seg::getNode();
             p->a = t->a, p->b = m;
             p->c = -1;
             t->l = p;
@@ -83,13 +92,13 @@ void add(Seg *t, int s,int e, int v){
         return add(t->l, s, e, v);
     }
     if(t->r == 0){
-        Seg *p = getNode();
+        Seg *p = Seg::getNode();
         p->a = m, p->b = t->b;
         p->c = -1;
         t->r = p;
     }
     if(t->l == 0){
-        Seg *p = getNode();
+        Seg *p = Seg::getNode();
         p->a = t->a, p->b = m;
         p->c = -1;
         t->l = p;
