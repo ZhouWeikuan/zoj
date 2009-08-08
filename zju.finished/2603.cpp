@@ -1,4 +1,5 @@
 #include<iostream>
+#include<algorithm>
 #include<vector>
 using namespace std;
 enum {
@@ -29,20 +30,18 @@ void solve(int n){
     }
     Node o;
     for (i=col[n].size()-1; i>=0; --i){
-        v = n - 1;
+        v = n;
         o = col[n][i];
-        move(o); // move out
         while(v>=0 && o.no <= (1<<v)){
-            move(o); // move out
+            if (v < num)
+                move(o); // move out
             --v;
-            move(o); // move in
+            if (v >= 0)
+                move(o); // move in
         }
             
         if (v >= 0){
-            move(o); // move in
             col[v].push_back(o);
-        } else {
-            //move(o); // move in
         }
     }
     col[n].clear();
@@ -64,7 +63,7 @@ int readIn(){
     col[num].clear();
     Node o;
     for (int i=0; i<lim; ++i){
-        scanf("%d", &o.val);
+        scanf("%u", &o.val);
         o.no = o.val + (1<<num);
         col[num].push_back(o);
     }
