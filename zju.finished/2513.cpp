@@ -1,25 +1,29 @@
 #include<iostream>
-// Runtime error
+#include<algorithm>
+#include<cstring>
+#include<string>
 using namespace std;
 struct Team {
     int  cnt;
-    char name[12];
-    char st[12][20];
+    string name;
+    string st[12];
 };
+char buf[200];
 int tn, pn;
 int pro[12];
-int idx[308];
-Team trp[308];
+int idx[3008];
+Team trp[3008];
 
 int cmp(int a, int b){
     if(trp[a].cnt != trp[b].cnt) return -trp[a].cnt + trp[b].cnt;
-    return strcmp(trp[a].st[pn],trp[b].st[pn]);
+    return strcmp(trp[a].st[pn].c_str(),trp[b].st[pn].c_str());
 }
+
 struct lessThan {
     bool operator()(const int &a, const int&b)const{
         int v = cmp(a,b);
         if(v == 0 ){
-            return strcmp(trp[a].name, trp[b].name) < 0;
+            return strcmp(trp[a].name.c_str(), trp[b].name.c_str()) < 0;
         }
         return v < 0;
     }
@@ -32,9 +36,9 @@ void fun(){
             r++;
         }
         pro[trp[idx[i]].cnt] ++;
-        printf("%d %s %d", r, trp[idx[i]].name, trp[idx[i]].cnt);
+        printf("%d %s %d", r, trp[idx[i]].name.c_str(), trp[idx[i]].cnt);
         for(j=0; j<=pn; j++){
-            printf(" %s", trp[idx[i]].st[j]);
+            printf(" %s", trp[idx[i]].st[j].c_str());
         }
         printf("\n");
     }
@@ -47,31 +51,35 @@ void fun(){
 }
 
 int proInfo(char *s){
-    scanf("%s", s);
-    if(s[0]=='-') return -1;
-    if(strcmp(s,"0")==0) return -1;
-    s[8] = ' ';
-    s += 9;
-    scanf("%s", s);
+    scanf("%s ", s);
+    int t = strlen(s);
+    if (t < 8)
+        return -1;
+    s += t;
+    *s ++ = ' ';
+    scanf("%s ", s);
     return 1;
 }
 
 int readIn(){
     int sec; 
-    if(scanf("%d%d",&sec,&pn)<0)
+    if(scanf("%d%d ",&sec,&pn)<0)
         return 0;
     memset(pro, 0, sizeof(pro));
     int i,n,r,p;
     tn = 0;
     while(sec--){
-        scanf("%d", &n);
+        scanf("%d ", &n);
         for(i=0; i<n; i++){
             idx[tn+i] = tn + i;
-            scanf("%d%s%d", &r, &trp[tn+i].name,&trp[tn+i].cnt);
+            scanf("%d%s%d ", &r, buf,&trp[tn+i].cnt);
+            trp[tn+i].name = buf;
             for(p=0; p<pn; p++){
-                r = proInfo(trp[tn+i].st[p]);
+                r = proInfo(buf);
+                trp[tn+i].st[p] = buf;
             }
-            scanf("%s", trp[tn+i].st[pn]);
+            scanf("%s ", buf);
+            trp[tn+i].st[pn] = buf;
         }
         tn += n;
     }
