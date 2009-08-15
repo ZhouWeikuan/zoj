@@ -1,21 +1,25 @@
-int primelist[200] = {2,3,5,7};
+#include<iostream> 
+
+using namespace std;
+enum {
+    SIZ = 100,
+};
+
+int primes[SIZ] = {2,3,5,7};
 int num = 4;
 
 void init(){
-	int n,i;
-	int lim;
-	int flag ;
-	for(n=9;n<1000;n+=2){
-		lim = (int)sqrt(n) + 1;
+	int flag;
+	for(int n=9; num<SIZ; n+=2){
 		flag = 0;
-		for(i=0;primelist[i] < lim;i++){
-			if(n % primelist[i] == 0){
+		for(int i=0; primes[i]*primes[i]<= n;i++){
+			if(n % primes[i] == 0){
 				flag = 1;
 				break;
 			}
 		}
 		if(flag ==0){
-			primelist[num++] = n;
+			primes[num++] = n;
 		}
 	}
 }
@@ -23,9 +27,6 @@ void init(){
 int main(){
 	int i;
 	init();
-	for(i=0;i<30;i++){
-		printf("%d ", primelist[i]);
-	}
 	scanf("%d",&i);
 	return 0;
 }
