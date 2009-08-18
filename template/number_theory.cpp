@@ -27,6 +27,18 @@ int egcd(int a, int b, int &x, int &y){
     return d;
 }
 
+// try to solve a*x = 1 (mod n)
+int modular_inverse(int a, int n){
+    int d, x, y;
+    if (a >= n){
+        d = egcd(a, n, x, y);
+    } else {
+        d = egcd(n, a, y, x);
+    }
+    if (d != 1) return -1;
+    return x;
+}
+
 int main(){
     int a, b, d, x, y;
     while(cin>>a>>b){

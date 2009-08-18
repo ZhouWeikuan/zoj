@@ -1,13 +1,14 @@
 #include<iostream>
+#include<cstring>
 #include<queue>
 using namespace std;
 // Wrong Answer
 enum {
     SIZ = 10,
     UP = 0,
-    RIGHT = 1,
-    DOWN = 2,
-    LEFT = 3,
+    RT = 1,
+    DN = 2,
+    LT = 3,
 };
 // /->0, \->1
 struct Node{
@@ -24,7 +25,7 @@ char lab[1<<SIZ][SIZ][SIZ]; // 0 for available
 char mat[SIZ][SIZ];
 char dir[] = "^>v<";
 int move[4][2] = {
-    /*Up*/{-1,0}, /*Right*/{0,1}, /*Down*/{1,0}, /*Left*/{0,-1}
+    /*UP*/{-1,0}, /*RT*/{0,1}, /*DN*/{1,0}, /*LT*/{0,-1}
 };
 inline bool valid(unsigned x, unsigned y){
     return (x<N)&&(y<M);
@@ -33,10 +34,6 @@ inline bool valid(unsigned x, unsigned y){
 void fun(){
     memset(step, -1, sizeof(step));
     step[start.s][start.x][start.y] = 0;
-    if(lab[start.s][start.x][start.y] != 0){
-        printf("poor\n");
-        return;
-    }
     queue<Node> q;
     q.push(start);
     Node nex;
@@ -58,11 +55,10 @@ void fun(){
             }
             if(lab[nex.s][nex.x][nex.y]!=0)
                 continue;
-            if(step[nex.s][nex.x][nex.y] > 
-                    step[start.s][start.x][start.y] + 1){
-                step[nex.s][nex.x][nex.y] = 
-                    step[start.s][start.x][start.y] + 1;
-                q.push(nex);
+            if(step[nex.s][nex.x][nex.y] > step[start.s][start.x][start.y] + 1){
+                if (step[nex.s][nex.x][nex.y] == -1)
+                    q.push(nex);
+                step[nex.s][nex.x][nex.y] = step[start.s][start.x][start.y] + 1;
             }
         }
         // directory
@@ -72,11 +68,10 @@ void fun(){
             nex.y = start.y + move[i][1];
             if(!valid(nex.x, nex.y) || lab[nex.s][nex.x][nex.y]!=0)
                 continue;
-            if(step[nex.s][nex.x][nex.y] > 
-                    step[start.s][start.x][start.y] + 1){
-                step[nex.s][nex.x][nex.y] = 
-                    step[start.s][start.x][start.y] + 1;
-                q.push(nex);
+            if(step[nex.s][nex.x][nex.y] > step[start.s][start.x][start.y] + 1){
+                if (step[nex.s][nex.x][nex.y] == -1)
+                    q.push(nex);
+                step[nex.s][nex.x][nex.y] = step[start.s][start.x][start.y] + 1;
             }
 
         }
@@ -94,22 +89,20 @@ void trace(Node b, char (*p)[SIZ]){
             p[b.x][b.y] = 2;
         } else if(mat[b.x][b.y] == '/'){
             switch(d){
-            case UP: d = RIGHT; break;
-            case DOWN: d = LEFT; break;
-            case LEFT: d = DOWN; break;
-            case RIGHT: d = UP; break;
+            case UP: d = RT; break;
+            case DN: d = LT; break;
+            case LT: d = DN; break;
+            case RT: d = UP; break;
             }
         } else if(mat[b.x][b.y]=='\\'){
             switch(d){
-            case UP: d = LEFT; break;
-            case DOWN: d = RIGHT; break;
-            case LEFT: d = UP; break;
-            case RIGHT: d = DOWN; break;
+            case UP: d = LT; break;
+            case DN: d = RT; break;
+            case LT: d = UP; break;
+            case RT: d = DN; break;
             }
-        } else if(mat[b.x][b.y] == '#'){// bat or block
+        } else { // bat or block
             return;
-        } else { // bat
-            p[b.x][b.y] = 2;
         }
         b.x += move[d][0];
         b.y += move[d][1];
@@ -131,7 +124,7 @@ void setup(unsigned state){
         for(j=0; j<M; j++){
             if(mat[i][j] == '.')
                 lab[state][i][j] = 0;
-            else if(mat[i][j] == '#')
+            else
                 lab[state][i][j] = 1;
         }
     }
@@ -141,8 +134,6 @@ void setup(unsigned state){
     for(i=0; i<mCnt; i++){
         lab[state][mir[i].x][mir[i].y] = 2;
     }
-    lab[state][start.x][start.y] = 0;
-    lab[state][end.x][end.y] = 0;
 }
 int readIn(){
     if(scanf("%d%d",&N,&M)<0)
@@ -170,7 +161,7 @@ int readIn(){
     mat[start.x][start.y] = '.';
     mat[end.x][end.y] = '.';
     j = 0;
-    for(i=0; i<mCnt; i++){
+    for(i=mCnt-1; i<mCnt; --i){
         j *= 2;
         j += (mat[mir[i].x][mir[i].y] == '\\');
     }
