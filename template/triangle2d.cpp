@@ -32,4 +32,8 @@ bool cocircle(Point &p1, Point &p2,Point &p3,Point &q,double &r)
     return true;
 }
 
+// calc the area of triangle (0, a, b)
+double area(const Point &a, const Point &b){
+    return (b.y*a.x - a.y*b.x)/2.0;
+}
 
