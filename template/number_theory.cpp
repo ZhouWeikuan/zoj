@@ -1,8 +1,7 @@
 #include<iostream>
-using namespace std;
-enum {
-    SIZ = 1,
-};
+
+
+namespace modular {
 
 int gcd(int a, int b){
     int t;
@@ -14,7 +13,6 @@ int gcd(int a, int b){
     return a;
 }
 
-// assume that a >= b
 int egcd(int a, int b, int &x, int &y){
     if(b == 0){
         x = 1, y = 0;
@@ -27,26 +25,39 @@ int egcd(int a, int b, int &x, int &y){
     return d;
 }
 
-// try to solve a*x = 1 (mod n)
-int modular_inverse(int a, int n){
-    int d, x, y;
-    if (a >= n){
-        d = egcd(a, n, x, y);
-    } else {
-        d = egcd(n, a, y, x);
-    }
+int inverse(int a, int n){
+    int x, y;
+    int d = egcd(a, n, x, y);
     if (d != 1) return -1;
     return x;
 }
 
-int main(){
-    int a, b, d, x, y;
-    while(cin>>a>>b){
-        d = egcd(a, b, x, y);
-        printf("d = %d, x = %d, y = %d\n", d, x, y);
-        printf("ax + by = %d\n", (a*x + b * y));
-        printf("\n");
+// calc a^b (mod n)
+int pow(int a, int b, int n){
+    if (b == 0)
+        return 1;
+    int r = pow(a, b/2, n);
+    if (b%2){
+        r *= a;
+        r %= n;
     }
-    return 0;
+    return r;
 }
 
+// calc  a*x = b (mod n), what is x?
+vector<int> linear_equation_solver(int a, int b, int n){
+    int x, y;
+    int d = egcd(a, n, x, y);
+    vector<int> v;
+    if (b % d == 0){
+        x = (x * b / d) % n;
+        for (int i=0; i<d; ++i){
+            y = (x + i *(n/d))%n;
+            v.push_back(y);
+        }
+    }
+    return v;
+}
+
+
+}// namespace modular
