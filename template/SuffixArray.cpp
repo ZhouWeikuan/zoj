@@ -30,7 +30,7 @@ class SuffixArray {
 };
 
 //char str[SIZ]={"MISSISSIPPI"};
-char str[SIZ]={"wanglaowu"};
+char buf[SIZ]={"wanglaowu"};
 
 void SuffixArray::computeType(){
     int i, j;
@@ -59,8 +59,8 @@ void SuffixArray::mySwap(int i, int j){
 
 void SuffixArray::init(){
     int i, j;
-    memset(type, -1, sizeof(type));    // type为同类链接
-    memset(B, -1, sizeof(B));    // B为位置链接
+    memset(type, -1, sizeof(type));    // type is link of same type
+    memset(B, -1, sizeof(B));    // B is link of position
     num = (int)strlen(str) + 1;
     // link the same character
     for(i=num-1; i>=0; i--){
@@ -120,8 +120,9 @@ void SuffixArray::output(){
 
 int main()
 {
+    scanf("%s", buf);
     SuffixArray sa;
-    sa.create(str);
+    sa.create(buf);
     sa.output();
     
     return 0;

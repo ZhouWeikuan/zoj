@@ -1,5 +1,7 @@
 #include<iostream>
-
+#include<cstdlib>
+#include<vector>
+using namespace std;
 
 namespace modular {
 
@@ -11,6 +13,14 @@ int gcd(int a, int b){
         b = t;
     }
     return a;
+}
+
+int lcm(const vector<int> &v){
+    int r = 1;
+    for (int i=0; i<v.size(); ++i){
+        r *= v[i]/gcd(r, v[i]);
+    }
+    return r;
 }
 
 int egcd(int a, int b, int &x, int &y){
@@ -28,20 +38,8 @@ int egcd(int a, int b, int &x, int &y){
 int inverse(int a, int n){
     int x, y;
     int d = egcd(a, n, x, y);
-    if (d != 1) return -1;
+    if (d != 1) return 0;
     return x;
-}
-
-// calc a^b (mod n)
-int pow(int a, int b, int n){
-    if (b == 0)
-        return 1;
-    int r = pow(a, b/2, n);
-    if (b%2){
-        r *= a;
-        r %= n;
-    }
-    return r;
 }
 
 // calc  a*x = b (mod n), what is x?
@@ -59,5 +57,92 @@ vector<int> linear_equation_solver(int a, int b, int n){
     return v;
 }
 
+// chinese reminder theorem
+// param 1: cop, co-prime values
+// param 2: rem, reminder for each co-prime values
+int crt(vector<int> &cop, vector<int> &rem){
+    int n = lcm(cop);    
+    int v = 0;
+    for (int i=0; i<rem.size(); ++i){
+        int m = n/cop[i];
+        int inv = inverse(m, cop[i]);
+        if (inv == 0) return 0;
+        v += m * inv * rem[i];
+        v %= n;
+    }
+    v = (v+n)%n;
+    return v;
+}
+
+// calc a^n(mod m)
+int pow(int a, int n, int m){
+    int d = a, r = 1;
+    while(n > 0){
+        if (n &0x01){
+            r = (r * d) % m;
+        }
+        n>>=1;
+        d = (d*d)%m;
+    }
+    return r;
+}
+
+bool witness(int a, int n){
+    int u = n-1, t = 0;
+    while(u&0x0f){
+        u>>=1;
+        ++t;
+    }
+    int cur, pre = pow(a, u, n);
+    while(t--){
+        cur = (pre*pre)%n;
+        if (cur==1 &&(pre!=1&&pre!=n-1))
+            return true;
+        pre = cur;
+    }
+    if (cur !=1) return true;
+    return false;
+}
+
+// miller-rabin
+bool prime_test(int n, int s){
+    while(s--){
+        int a = 1 + random()%(n-1); // better to chooes a random prime
+        if (witness(a,n))
+            return false;
+    }
+    return true;
+}
+
+// pollard-rho
+int factor(int n){
+    int i=1;
+    int x = 1 + random()%(n-1);
+    int y = x;
+    int k = 2;
+    for(;;){
+        ++i;
+        x = (x*x-1)%n;
+        int d = gcd(y>x?y-x:x-y, n);
+        if (d!=1&&d!=n)
+            return d;
+        if (i==k){
+            y = x;
+            k <<=1;
+        }
+    }
+    return 0;
+}
+
 
 }// namespace modular
+
+int main(){
+    int a,n,m;
+    while(scanf("%d", &n) > 0){
+        printf("%d\n", modular::factor(n));
+    }
+
+    return 0;
+}
+
