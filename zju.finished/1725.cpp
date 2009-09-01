@@ -8,7 +8,7 @@ enum {
 struct Node {
     int type; // 0, integers 1, operators 2, string
     int val;
-    string name; 
+    string name;
 };
 vector<Node> vec;
 

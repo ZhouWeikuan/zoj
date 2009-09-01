@@ -68,7 +68,7 @@ int changeKey(char *str = NULL){
         }
         vis[t] = true;
         rev[t] = j;
-        key[j++] = t; 
+        key[j++] = t;
     }
     if (j<ALP){
         changeKey(NULL);
