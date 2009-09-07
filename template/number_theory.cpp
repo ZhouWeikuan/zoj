@@ -1,9 +1,31 @@
 #include<iostream>
+#include<algorithm>
 #include<cstdlib>
 #include<vector>
 using namespace std;
 
 namespace modular {
+
+const int SIZ = 100;
+
+int primes[SIZ] = {2,3,5,7};
+int num = 4;
+
+void init(){
+	bool flag;
+	for(int n=9; num<SIZ; n+=2){
+		flag = true;
+		for(int i=0; primes[i]*primes[i]<= n;i++){
+			if(n % primes[i] == 0){
+				flag = false;
+				break;
+			}
+		}
+		if(flag){
+			primes[num++] = n;
+		}
+	}
+}
 
 int gcd(int a, int b){
     int t;
@@ -89,7 +111,7 @@ int pow(int a, int n, int m){
 
 bool witness(int a, int n){
     int u = n-1, t = 0;
-    while(u&0x0f){
+    while((u&0x01)!=0x01){
         u>>=1;
         ++t;
     }
@@ -106,8 +128,11 @@ bool witness(int a, int n){
 
 // miller-rabin
 bool prime_test(int n, int s){
-    while(s--){
-        int a = 1 + random()%(n-1); // better to chooes a random prime
+    if (n <= primes[SIZ-1]){
+        return binary_search(&primes[0], primes+SIZ, n);
+    }
+    for(int i=0; i<s; ++i){
+        int a = primes[i];
         if (witness(a,n))
             return false;
     }
