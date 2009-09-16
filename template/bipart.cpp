@@ -12,29 +12,29 @@ int vis[SZ];
 int num;
 
 int dfs(int p){
-  int i,t;
-  for(i=0;i< num;i++)
-    if(tab[i][p] && !vis[i]){
-      vis[i]=1;
-      t=mat[i];
-      mat[i]=p;
-      if(t==-1 || dfs(t))
-          return 1;
-      mat[i]=t;
-    }
-  return 0;
+    int i,t;
+    for(i=0;i< num;i++)
+        if(tab[i][p] && !vis[i]){
+            vis[i]=1;
+            t=mat[i];
+            mat[i]=p;
+            if(t==-1 || dfs(t))
+                return 1;
+            mat[i]=t;
+        }
+    return 0;
 }
 
 int get_match(){
-  int i,res=0;
-  memset(mat,-1,sizeof(mat));
-  for(i=0;i< num;i++){
-      memset(vis,0,sizeof(vis));
-      if(dfs(i))
-         res++;
-  }
+    int i,res=0;
+    memset(mat,-1,sizeof(mat));
+    for(i=0;i< num;i++){
+        memset(vis,0,sizeof(vis));
+        if(dfs(i))
+            res++;
+    }
 
-  return num - res;
+    return num - res;
 }
 
 void readIn(){
@@ -58,5 +58,5 @@ int main(){
         cout<<get_match()<<endl;
     }
 
-	return 0;
+    return 0;
 }
