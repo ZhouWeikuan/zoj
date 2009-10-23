@@ -1,4 +1,5 @@
 #include<iostream>
+#include<cstdio>
 using namespace std;
 enum {
     SIZ = 104,
