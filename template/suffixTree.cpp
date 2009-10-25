@@ -2,11 +2,21 @@
 #include<cstring>
 #include<cctype>
 #include<map>
+#include<set>
 #include<string>
+/*  Suffix Tree is good to find Longest Repeated Substring, and its variants
+ *  1) longest repeated substring, find the deepest internal node,
+ *  2) longest repeated substring with at least k occurrences, find the deepest internal node
+ *              with at least k desendants
+ *  3) consecutive longest repeated substring, find the deepest internal node,
+ *              and its desendants has difference with at most the depth.
+ */
 using namespace std;
 
 enum {
     ALP = 27,
+    SIZ = 50004,
+    INC = SIZ/20,
 };
 int maxlen;
 
@@ -16,8 +26,8 @@ inline int getPos(char c) {
 }
 struct Node {
     Node * suff; // suffix link
-    Node * tro[ALP];
-    int    trs[ALP]; 
+    Node * tro[ALP]; //  suffix object
+    int    trs[ALP]; //  start of each transition
     int    tre[ALP]; //  end  of each transition
 };
 
@@ -35,6 +45,7 @@ struct suffixTree {
     bool test_and_split(Node *s, int k, int p, int t, Node *&ns);
     Node *canonize(Node *s, int k, int i, int &nk);
     void output(int, Node *);
+    void clrs(int prelen, Node *); // consecutive longest repeated substring
 };
 Node * suffixTree::next = 0;
 
@@ -46,9 +57,11 @@ void suffixTree::putNode(Node *p){
 Node * suffixTree::getNode(){
     Node *p;
     if (next == 0){
-        p = (Node*)malloc(sizeof(Node));
-        memset(p, 0, sizeof(*p));
-        return p;
+        p = (Node*)malloc(sizeof(Node)*INC);
+        for (int i=0; i<INC; ++i)
+            p[i].suff = &p[i+1];
+        p[INC-1].suff = 0;
+        next = p;
     }
     p = next; next = next->suff;
     memset(p, 0, sizeof(*p));
@@ -130,18 +143,20 @@ Node *suffixTree::canonize(Node *s, int k, int p, int &nk){
         k = k + tp - tk + 1;
         s = ts;
         if (k <= p){
+            pos = getPos(tree[k]);
             ts = s->tro[pos];
             tk = s->trs[pos];
             tp = s->tre[pos];
         }
     }
-    nk = k; return s;
+    nk = k; 
+    return s;
 }
 
 void suffixTree::create(char *_t){
     tree = _t;
     TEND = strlen(tree);
-    tree[TEND] = 'a' + ALP - 1;
+    tree[TEND] = 'a' + ALP - 1; // append with a character that never appears
     tree[TEND+1] = 0;
     memset(&root, 0, sizeof(root));
     memset(&empty, 0, sizeof(empty));
@@ -174,15 +189,49 @@ void suffixTree::output(int tab, Node *p){
     }
 }
 
-char buf[30];
+int clrs_ans = 0;
+int ptr[ALP], pn;
+
+void suffixTree::clrs(int prelen, Node *p){
+    int i;
+    bool leaf = true;
+    for (i=0; i<ALP; ++i){
+        if (p->tro[i] == 0) continue;
+        leaf = false;
+        clrs(prelen + p->tre[i] - p->trs[i] + 1, p->tro[i]);
+    }
+    if (!leaf && prelen > clrs_ans){
+        pn = 0;
+        for (i=0; i<ALP; ++i){
+            if(p->tro[i]==0) continue;
+            ptr[pn++] = p->trs[i];
+        }
+        sort(ptr, ptr+pn);
+        int t, j;
+        for (i=0; i<pn; ++i){
+            j = upper_bound(ptr+i, ptr+pn, ptr[i]+prelen) - ptr - 1;
+            if (j>i&&ptr[j]-ptr[i]>clrs_ans){
+                clrs_ans = ptr[j] - ptr[i];
+            }
+        }
+    }
+}
+
+char buf[SIZ];
 
 int main(){
+    int tn;
+    scanf("%d", &tn);
     suffixTree st;
-    while(scanf("%s", buf) > 0){
+    while(tn-- > 0){
+        scanf("%s", buf); 
         maxlen = 1;
         st.create(buf);
-        printf("maxlen = %d\n", maxlen);
-        //st.output(0, &st.root);
+        // printf("maxlen = %d\n", maxlen);
+        clrs_ans = 0;
+        // st.output(0, &st.root);
+        st.clrs(0, &st.root);
+        printf("%d\n", clrs_ans);
         st.clear(&st.root);
     }
     return 0;

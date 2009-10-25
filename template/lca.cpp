@@ -11,6 +11,7 @@ enum {
 struct Node {
     int par;
     int lvl;
+    int dis;
 };
 
 int num;
