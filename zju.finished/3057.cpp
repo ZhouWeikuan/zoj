@@ -3,6 +3,14 @@
 #include<cstring>
 #include<cstdlib>
 using namespace std;
+/* 当求点k=tab[f][s](f<s)值时，先求出k的不可能值notk，
+ *          除去所有的notk后，剩下最小的那个值就是k
+ * 即若想知道当f, s时, k的值，那么notk为
+ *      0) 以前已经求出的值，即tab[f][i](i<s)和tab[i][s](i<f)
+ *      1) 固定f, 当i<s时, notk=tab[f][i] + s - i 
+ *      2) 固定s, 当i<f时, notk=tab[i][s] + f - i
+ *      3) 同时滑动f,s，即当i<f时, notk=tab[f-i][s-i];
+ **/ 
 enum {
     SIZ = 301,
     N = 1,
@@ -46,6 +54,7 @@ void init(){
             for (i=0; i<f; i++){
                 add(i, s, 0);
                 add(i, s, f-i);
+                add(i, s-f+i, 0);
             }
             for (i=0; i<s; ++i){
                 add(f, i, 0);
@@ -62,11 +71,19 @@ void init(){
             av[s] = av[v] = 1;
         }
     }
+    
+    /*
+    for (int i=0; i<SIZ; ++i){
+        for (int j=i; j<SIZ; ++j){
+            if (tab[i][j] < j) continue;
+            printf("%d %d %d\n", i, j, tab[i][j]);
+        }
+    }
+    */
 }
 
 int main(){
     init();
-
     int d[3] = {SIZ, SIZ, SIZ};
     while(scanf("%d%d%d ", &d[0], &d[1], &d[2]) > 0){
         sort(d, d+3);
